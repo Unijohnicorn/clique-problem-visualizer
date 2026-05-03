@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Clique Problem Visualizer | Polished Final</title>
+
+<style>
+:root{
+--bg:#07090f;
+--bg2:#0b1220;
+--panel:#111827;
+--panel2:#151b29;
+--line:#243047;
+--line2:#334155;
+--text:#f8fafc;
+--muted:#94a3b8;
+--accent:#8b5cf6;
+--accent2:#22d3ee;
+--good:#10b981;
+--bad:#ef4444;
+--warn:#f59e0b;
+--shadow:0 18px 45px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+html,body{
+height:100%;
+}
+
+/* ONLY CHANGE = RIGHT SIDE PAGE SCROLL ENABLED */
+body{
+font-family:Inter,Segoe UI,Arial,sans-serif;
+background:
+radial-gradient(circle at top left,#172036 0%,transparent 35%),
+radial-gradient(circle at bottom right,#102434 0%,transparent 30%),
+var(--bg);
+color:var(--text);
+overflow-y:auto;
+overflow-x:hidden;
+display:grid;
+grid-template-columns:340px 1fr;
+}
+
+/* RIGHT SCROLLBAR */
+body::-webkit-scrollbar{
+width:10px;
+}
+body::-webkit-scrollbar-track{
+background:#0b1220;
+}
+body::-webkit-scrollbar-thumb{
+background:#334155;
+border-radius:10px;
+}
+body::-webkit-scrollbar-thumb:hover{
+background:#475569;
+}
+
+/* Sidebar */
+.sidebar{
+background:linear-gradient(180deg,#0d121c,#0a0f18);
+border-right:1px solid var(--line);
+padding:18px;
+overflow:auto;
+}
+
+.sidebar::-webkit-scrollbar{width:8px}
+.sidebar::-webkit-scrollbar-thumb{
+background:#1f2937;border-radius:10px;
+}
+
+.logo{
+font-size:30px;
+font-weight:900;
+letter-spacing:-1px;
+margin-bottom:4px;
+}
+.logo span{color:var(--accent)}
+.sub{
+font-size:13px;
+color:var(--muted);
+margin-bottom:18px;
+}
+
+.box{
+background:linear-gradient(180deg,var(--panel),#0f172a);
+border:1px solid var(--line);
+padding:15px;
+border-radius:18px;
+margin-bottom:14px;
+box-shadow:var(--shadow);
+}
+
+.box h3{
+font-size:13px;
+letter-spacing:.6px;
+margin-bottom:12px;
+color:#dbeafe;
+text-transform:uppercase;
+}
+
+label{
+display:block;
+font-size:12px;
+color:var(--muted);
+margin:9px 0 6px;
+}
+
+select,input{
+width:100%;
+padding:10px 12px;
+background:#0b1220;
+border:1px solid var(--line);
+border-radius:12px;
+color:white;
+outline:none;
+}
+
+select:focus,input:focus{
+border-color:var(--accent2);
+box-shadow:0 0 0 3px rgba(34,211,238,.12);
+}
+
+.grid2{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+margin-top:10px;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:800;
+color:white;
+background:#1e293b;
+transition:.18s ease;
+box-shadow:0 6px 14px rgba(0,0,0,.18);
+}
+
+button:hover{
+transform:translateY(-2px);
+filter:brightness(1.06);
+}
+
+button:active{
+transform:translateY(0);
+}
+
+.primary{background:linear-gradient(90deg,#7c3aed,var(--accent))}
+.green{background:linear-gradient(90deg,#059669,var(--good))}
+.red{background:linear-gradient(90deg,#dc2626,var(--bad))}
+.orange{background:linear-gradient(90deg,#d97706,var(--warn))}
+
+.note{
+font-size:12px;
+line-height:1.65;
+color:var(--muted);
+margin-top:8px;
+}
+
+details{
+margin-top:10px;
+background:#0b1220;
+padding:10px;
+border-radius:12px;
+border:1px solid var(--line);
+}
+
+summary{
+cursor:pointer;
+font-weight:700;
+}
+
+.main{
+padding:16px;
+display:grid;
+grid-template-rows:1fr 305px;
+gap:14px;
+}
+
+.top{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:14px;
+min-height:0;
+}
+
+.card{
+background:linear-gradient(180deg,var(--panel),var(--panel2));
+border:1px solid var(--line);
+border-radius:20px;
+padding:14px;
+display:flex;
+flex-direction:column;
+min-height:0;
+box-shadow:var(--shadow);
+}
+
+.head{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
+
+.head h2{
+font-size:14px;
+letter-spacing:.4px;
+}
+
+.badge{
+font-size:11px;
+padding:6px 10px;
+background:#1e293b;
+border:1px solid #334155;
+border-radius:999px;
+color:#e2e8f0;
+}
+
+svg{
+width:100%;
+height:100%;
+background:
+radial-gradient(circle at center,#101827 0%,#0b1220 70%);
+border-radius:16px;
+border:1px solid #1e293b;
+}
+
+.bottom{
+display:grid;
+grid-template-columns:320px 1fr 420px;
+gap:14px;
+min-height:0;
+}
+
+.stat{
+background:#0b1220;
+padding:12px;
+border-radius:16px;
+border:1px solid var(--line);
+margin-bottom:10px;
+}
+
+.small{
+font-size:12px;
+color:var(--muted);
+margin-bottom:5px;
+}
+
+.big{
+font-size:24px;
+font-weight:900;
+letter-spacing:-.5px;
+}
+
+.code{
+font-family:Consolas,monospace;
+font-size:13px;
+line-height:1.8;
+background:#0b1220;
+padding:12px;
+border-radius:16px;
+border:1px solid var(--line);
+white-space:pre-line;
+overflow:auto;
+}
+
+.activeLine{
+background:rgba(139,92,246,.18);
+padding:2px 8px;
+border-radius:8px;
+display:block;
+}
+
+.explain{
+margin-top:10px;
+font-size:13px;
+line-height:1.6;
+color:var(--muted);
+padding:10px;
+background:#0b1220;
+border:1px solid var(--line);
+border-radius:14px;
+}
+
+@media(max-width:1200px){
+body{grid-template-columns:1fr}
+.sidebar{display:none}
+.top,.bottom{grid-template-columns:1fr}
+.main{grid-template-rows:auto auto}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+
+<div class="logo">Cli<span>que</span></div>
+<div class="sub">Advanced NP-Complete Visualizer</div>
+
+<div class="box">
+<h3>Controls</h3>
+
+<label>Preset Graph</label>
+<select id="preset">
+<option value="1">Triangle (k=3)</option>
+<option value="2">Dense Graph (k=4)</option>
+<option value="3">Counter Example</option>
+</select>
+
+<label>Clique Size (k)</label>
+<input type="number" id="kVal" min="2" max="6" value="3">
+
+<label>Speed <span id="speedText" style="float:right;color:#22d3ee">x3</span></label>
+<input type="range" id="speed" min="1" max="5" step="1" value="3">
+
+<div class="grid2">
+<button class="primary" onclick="init()">Initialize</button>
+<button class="orange" onclick="buildSteps()">Build Steps</button>
+<button onclick="stepRun()">Step</button>
+<button class="green" onclick="play()">Play</button>
+<button class="red" onclick="pauseRun()">Pause</button>
+<button onclick="resetAll()">Reset</button>
+</div>
+</div>
+
+<div class="box">
+<h3>Key Concepts</h3>
+<div class="note">Clique = every pair of chosen vertices is connected.</div>
+<div class="note">Independent Set = no chosen vertices are adjacent.</div>
+<div class="note">Complement Graph flips edges/non-edges.</div>
+</div>
+
+<div class="box">
+<h3>Worked Example</h3>
+<div class="note">
+If vertices {0,1,2} all connect to each other, then they form a clique of size 3.
+</div>
+</div>
+
+<div class="box">
+<h3>NP-Completeness</h3>
+<div class="note">
+Clique is in NP because checking all pairs of a proposed set takes polynomial time.
+</div>
+<details>
+<summary>Reduction: Independent Set → Clique</summary>
+<div class="note">
+Construct complement graph G′.  
+Independent Set in G iff Clique in G′.
+</div>
+</details>
+</div>
+
+<div class="note" style="text-align:center;margin-top:8px">
+Badr Arabi | 20230003374
+</div>
+
+</div>
+
+<div class="main">
+
+<div class="top">
+
+<div class="card">
+<div class="head">
+<h2>BRUTE FORCE</h2>
+<div class="badge" id="status1">Idle</div>
+</div>
+<svg id="svg1"></svg>
+</div>
+
+<div class="card">
+<div class="head">
+<h2>BACKTRACKING + PRUNING</h2>
+<div class="badge" id="status2">Idle</div>
+</div>
+<svg id="svg2"></svg>
+</div>
+
+</div>
+
+<div class="bottom">
+
+<div>
+
+<div class="stat">
+<div class="small">Brute Force Checks</div>
+<div class="big" id="ops1">0</div>
+</div>
+
+<div class="stat">
+<div class="small">Backtracking Calls</div>
+<div class="big" id="ops2">0</div>
+</div>
+
+<div class="stat">
+<div class="small">Efficiency Gain</div>
+<div class="big" id="gain">0%</div>
+</div>
+
+<div class="stat">
+<div class="small">Step Counter</div>
+<div class="big" id="stepCounter">0</div>
+</div>
+
+</div>
+
+<div class="card">
+<div class="head">
+<h2>Growth Curve</h2>
+</div>
+<svg id="chart"></svg>
+</div>
+
+<div class="card">
+<div class="head">
+<h2>Pseudocode + Live Explanation</h2>
+</div>
+
+<div class="code" id="pseudo"></div>
+
+<div class="explain" id="explain">
+Ready to begin.
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+let nodes=[],edges=[],adj={},k=3;
+let bruteSubs=[],bruteIndex=0;
+let btSteps=[],btIndex=0;
+let timer=null;
+let ops1=0,ops2=0,totalSteps=0;
+let hist1=[],hist2=[];
+
+function presets(id){
+
+if(id=="1"){
+nodes=[[140,130],[360,130],[250,290]];
+edges=[[0,1],[1,2],[0,2]];
+k=3;
+}
+
+if(id=="2"){
+nodes=[[90,100],[250,80],[430,100],[150,260],[350,260]];
+edges=[[0,1],[0,3],[0,4],[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]];
+k=4;
+}
+
+if(id=="3"){
+nodes=[[80,90],[230,70],[400,90],[120,250],[280,230],[430,250]];
+edges=[[0,1],[1,2],[0,3],[1,3],[1,4],[2,4],[3,4],[4,5]];
+k=3;
+}
+}
+
+function buildAdj(){
+adj={};
+for(let i=0;i<nodes.length;i++) adj[i]=new Set();
+for(let [a,b] of edges){
+adj[a].add(b);
+adj[b].add(a);
+}
+}
+
+function init(){
+pauseRun();
+
+presets(document.getElementById("preset").value);
+k=parseInt(document.getElementById("kVal").value)||k;
+
+buildAdj();
+
+ops1=0; ops2=0; totalSteps=0;
+bruteIndex=0; btIndex=0;
+hist1=[]; hist2=[];
+
+makeSubsets();
+
+btSteps=[];
+backtrack([],Array.from(nodes.keys()));
+
+draw("svg1",[]);
+draw("svg2",[]);
+drawChart();
+
+setPseudo(1);
+
+document.getElementById("status1").innerText="Ready";
+document.getElementById("status2").innerText="Ready";
+
+document.getElementById("explain").innerText="Initialized graph and prepared both algorithms.";
+
+updateStats();
+}
+
+function resetAll(){ init(); }
+
+function buildSteps(){
+pauseRun();
+makeSubsets();
+btSteps=[];
+backtrack([],Array.from(nodes.keys()));
+document.getElementById("explain").innerText="All simulation steps rebuilt.";
+}
+
+function makeSubsets(){
+bruteSubs=[];
+let arr=Array.from(nodes.keys());
+
+function comb(start,path){
+if(path.length===k){
+bruteSubs.push([...path]);
+return;
+}
+for(let i=start;i<arr.length;i++){
+path.push(arr[i]);
+comb(i+1,path);
+path.pop();
+}
+}
+comb(0,[]);
+}
+
+function isClique(set){
+for(let i=0;i<set.length;i++){
+for(let j=i+1;j<set.length;j++){
+if(!adj[set[i]].has(set[j])) return false;
+}
+}
+return true;
+}
+
+function backtrack(curr,cands){
+
+ops2++;
+
+btSteps.push({
+nodes:[...curr],
+type:"search",
+msg:"Exploring branch "+JSON.stringify(curr)
+});
+
+if(curr.length===k){
+btSteps.push({
+nodes:[...curr],
+type:"found",
+msg:"Clique found: "+JSON.stringify(curr)
+});
+return true;
+}
+
+if(curr.length+cands.length<k){
+btSteps.push({
+nodes:[...curr],
+type:"prune",
+msg:"Branch pruned because remaining candidates cannot reach k."
+});
+return false;
+}
+
+for(let i=0;i<cands.length;i++){
+let v=cands[i];
+let next=cands.slice(i+1).filter(x=>adj[v].has(x));
+if(backtrack([...curr,v],next)) return true;
+}
+return false;
+}
+
+function stepRun(){
+
+if(bruteIndex>=bruteSubs.length && btIndex>=btSteps.length){
+pauseRun();
+document.getElementById("status1").innerText="Complete";
+document.getElementById("status2").innerText="Complete";
+document.getElementById("explain").innerText="Simulation completed successfully.";
+return;
+}
+
+totalSteps++;
+
+if(bruteIndex<bruteSubs.length){
+let s=bruteSubs[bruteIndex++];
+ops1++;
+
+let found=isClique(s);
+
+draw("svg1",s,found?"found":"active");
+document.getElementById("status1").innerText=found?"Found":"Running";
+
+document.getElementById("explain").innerText="Brute Force checking subset "+JSON.stringify(s);
+
+setPseudo(found?3:2);
+}
+
+if(btIndex<btSteps.length){
+let st=btSteps[btIndex++];
+
+draw("svg2",st.nodes,st.type);
+document.getElementById("status2").innerText=st.type;
+document.getElementById("explain").innerText=st.msg;
+
+if(st.type==="prune") setPseudo(5);
+if(st.type==="found") setPseudo(3);
+if(st.type==="search") setPseudo(4);
+}
+
+updateStats();
+}
+
+function play(){
+pauseRun();
+
+const level=parseInt(document.getElementById("speed").value);
+const map={1:1200,2:850,3:600,4:350,5:180};
+
+timer=setInterval(stepRun,map[level]);
+}
+
+function pauseRun(){
+clearInterval(timer);
+timer=null;
+}
+
+document.getElementById("speed").oninput=function(){
+document.getElementById("speedText").innerText="x"+this.value;
+if(timer) play();
+};
+
+function updateStats(){
+document.getElementById("ops1").innerText=ops1;
+document.getElementById("ops2").innerText=ops2;
+document.getElementById("stepCounter").innerText=totalSteps;
+
+let g=ops1?Math.max(0,Math.round((1-ops2/ops1)*100)):0;
+document.getElementById("gain").innerText=g+"%";
+
+hist1.push(ops1);
+hist2.push(ops2);
+
+drawChart();
+}
+
+function setPseudo(line){
+const arr=[
+"1. Generate subset of size k",
+"2. Check whether all pairs are connected",
+"3. If yes → Clique found",
+"4. Else continue exploring",
+"5. Prune branches that cannot reach k"
+];
+
+let html="";
+for(let i=0;i<arr.length;i++){
+if(i+1===line) html+='<span class="activeLine">'+arr[i]+'</span>';
+else html+=arr[i]+"\n";
+}
+document.getElementById("pseudo").innerHTML=html;
+}
+
+function draw(id,active=[],mode=""){
+let svg=document.getElementById(id);
+svg.innerHTML="";
+
+for(let [a,b] of edges){
+let edgeColor=(active.includes(a)&&active.includes(b))?"#8b5cf6":"#334155";
+line(svg,nodes[a][0],nodes[a][1],nodes[b][0],nodes[b][1],edgeColor);
+}
+
+for(let i=0;i<nodes.length;i++){
+let c="#64748b";
+if(active.includes(i)) c="#8b5cf6";
+if(mode==="found"&&active.includes(i)) c="#10b981";
+if(mode==="prune"&&active.includes(i)) c="#ef4444";
+
+circle(svg,nodes[i][0],nodes[i][1],18,c);
+text(svg,nodes[i][0],nodes[i][1]+4,i);
+}
+}
+
+function line(svg,x1,y1,x2,y2,c){
+svg.innerHTML+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="3" stroke-linecap="round"/>`;
+}
+
+function circle(svg,x,y,r,c){
+svg.innerHTML+=`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" stroke="#ffffff22" stroke-width="2"/>`;
+}
+
+function text(svg,x,y,t){
+svg.innerHTML+=`<text x="${x}" y="${y}" fill="white" font-size="12" font-weight="700" text-anchor="middle">${t}</text>`;
+}
+
+function drawChart(){
+let svg=document.getElementById("chart");
+svg.innerHTML="";
+
+let w=svg.clientWidth||500;
+let h=240;
+let max=Math.max(5,...hist1,...hist2);
+
+for(let i=0;i<5;i++){
+let y=h-(i/4*h);
+line(svg,0,y,w,y,"#1e293b");
+}
+
+poly(svg,hist1,w,h,max,"#ef4444");
+poly(svg,hist2,w,h,max,"#10b981");
+}
+
+function poly(svg,data,w,h,max,color){
+if(data.length<2) return;
+
+let pts=data.map((v,i)=>{
+let x=i*(w/(Math.max(1,data.length-1)));
+let y=h-(v/max*h);
+return x+","+y;
+}).join(" ");
+
+svg.innerHTML+=`<polyline fill="none" stroke="${color}" stroke-width="3" points="${pts}" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+
+init();
+</script>
+
+</body>
+</html>
